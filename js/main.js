@@ -1,6 +1,24 @@
+function logViewAddLine(s) { logView.innerText = s + '\n' + logView.innerText; }
 function upload() {
     fileInput = document.getElementById('FileInput')
+    logView = document.getElementById('LogView')
+
+    var filePath = document.getElementById('DirInput').value + fileInput.files[0].name;
     var xhttp = new XMLHttpRequest();
-    xhttp.open('POST', encodeURI('/upload/storage/' + document.getElementById('DirInput').value + fileInput.files[0].name), true)
+
+    xhttp.addEventListener("load", transferComplete);
+    xhttp.addEventListener("error", transferFailed);
+
+    function transferComplete(e) {
+        logViewAddLine('File uploaded: ' + filePath);
+    }
+
+    function transferFailed(e) {
+        logViewAddLine('File upload failed: ' + filePath);
+    }
+
+    logViewAddLine('Preparing to upload file: ' + filePath);
+    xhttp.open('POST', encodeURI('/upload/storage/' + filePath), true)
     xhttp.send(fileInput.files[0])
+    logViewAddLine('Uploading file: ' + filePath);
 }
